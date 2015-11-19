@@ -121,7 +121,22 @@
         getDummyMediaInfo: function(type) {
             return {
                 type: type,
-                bitrateList: [1000, 2000, 3000],
+                bitrateList: [
+                    {
+                        bandwidth: 1000,
+                        width: 320,
+                        height: 320
+                    },
+                    {
+                        bandwidth: 2000,
+                        width: 540,
+                        height: 540
+                    },
+                    {
+                        bandwidth: 3000,
+                        width: 1024,
+                        height: 1024
+                    }],
                 representationCount: 3
             }
         }

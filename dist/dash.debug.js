@@ -3918,7 +3918,11 @@ Dash.dependencies.DashManifestExtensions.prototype = {
         if (!adaptation || !adaptation.Representation_asArray || !adaptation.Representation_asArray.length) return null;
         var a = this.processAdaptation(adaptation), reps = a.Representation_asArray, ln = reps.length, bitrateList = [];
         for (var i = 0; i < ln; i += 1) {
-            bitrateList.push(reps[i].bandwidth);
+            bitrateList.push({
+                bandwidth: reps[i].bandwidth,
+                width: reps[i].width || 0,
+                height: reps[i].height || 0
+            });
         }
         return bitrateList;
     },
@@ -7155,7 +7159,9 @@ MediaPlayer.dependencies.AbrController = function() {
                 bitrateInfo = new MediaPlayer.vo.BitrateInfo();
                 bitrateInfo.mediaType = type;
                 bitrateInfo.qualityIndex = i;
-                bitrateInfo.bitrate = bitrateList[i];
+                bitrateInfo.bitrate = bitrateList[i].bandwidth;
+                bitrateInfo.width = bitrateList[i].width;
+                bitrateInfo.height = bitrateList[i].height;
                 infoList.push(bitrateInfo);
             }
             return infoList;
@@ -8072,7 +8078,9 @@ MediaPlayer.dependencies.MediaController = function() {
         var mode = this.getSelectionModeForInitialTrack(), tmpArr = [], getTracksWithHighestBitrate = function(trackArr) {
             var max = 0, result = [], tmp;
             trackArr.forEach(function(track) {
-                tmp = Math.max.apply(Math, track.bitrateList);
+                tmp = Math.max.apply(Math, track.bitrateList.map(function(obj) {
+                    return obj.bandwidth;
+                }));
                 if (tmp > max) {
                     max = tmp;
                     result = [ track ];
@@ -14289,6 +14297,8 @@ MediaPlayer.vo.BitrateInfo = function() {
     "use strict";
     this.mediaType = null;
     this.bitrate = null;
+    this.width = null;
+    this.height = null;
     this.qualityIndex = NaN;
 };
 
